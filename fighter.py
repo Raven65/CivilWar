@@ -66,15 +66,16 @@ class Fighter():
 		return new_action_dict[int(action)]
 
 	def minimax(self, enemy, player, enemy_move):
-		move = ["attack", "defend"]
-		if not self.cd:
-			move.append("counter attack")
-		if self.mp == 4:
-			move.append("super attack")
+
 		max_val = -30
 		min_val = 30
-		for x in move:
-			if player == 0:
+		if player == 0:
+			move = ["attack", "defend"]
+			if not self.cd:
+				move.append("counter attack")
+			if self.mp == 4:
+				move.append("super attack")
+			for x in move:
 				temp_a = copy.deepcopy(self)
 				temp_b = copy.deepcopy(enemy)
 				enemy_move = self.minimax(enemy, 1, x)
@@ -86,7 +87,13 @@ class Fighter():
 					best_move = x
 				del temp_a
 				del temp_b
-			elif player == 1:
+		elif player == 1:
+			move = ["attack", "defend"]
+			if not enemy.cd:
+				move.append("counter attack")
+			if enemy.mp == 4:
+				move.append("super attack")
+			for x in move:
 				temp_a = copy.deepcopy(self)
 				temp_b = copy.deepcopy(enemy)
 				fn.fight_function[x](temp_b, temp_a, enemy_move)
