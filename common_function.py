@@ -22,7 +22,7 @@ def choose_input(message, limit_list, intro):
 	return value
 
 
-def keyboard_output(settings, fighter_x, fighter_y, action_x, action_y):
+def keyboard_output(settings, fighter_x, fighter_y, action, flag):
 	"""询问用户选择输入
 	Args:
 		settings: 设定信息，获取预设评论长度等
@@ -32,19 +32,20 @@ def keyboard_output(settings, fighter_x, fighter_y, action_x, action_y):
 	# 获取名字简写，更改动作时态
 	simple_name_x = "".join([name[0:1] for name in fighter_x.name.split()])
 	simple_name_y = "".join([name[0:1] for name in fighter_y.name.split()])
-	if action_x == "do nothing":
-		action_x = "did nothing"
+	if action == "do nothing":
+		action = "did nothing"
 	else:
-		action_x += "ed"
-	if action_y == "do nothing":
-		action_y = "did nothing"
+		action += "ed"
+	if flag:
+		commentary = fighter_x.name + " " + action + "."
 	else:
-		action_y += "ed"
-	commentary = fighter_x.name + " " + action_x + ", " + fighter_y.name + " " + action_y + "."
+		commentary = fighter_y.name + " " + action + "."
+
 	# 计算空格长度
 	blank_len = settings.max_comment - 2 * settings.sta_length - len(commentary)
 	blank1 = " " * (blank_len // 2)
 	blank2 = " " * (blank_len - blank_len // 2)
-	print("%s|%02d|%d:%d%s%s%s%d:%d|%02d|%s" % (simple_name_x, fighter_x.hp, fighter_x.mp, fighter_x.cd,
-												blank1, commentary, blank2,
-												fighter_y.cd, fighter_y.mp, fighter_y.hp, simple_name_y))
+	print("%s|%02d|%02d|%02d|%d%s%s%s%d|%02d|%02d|%02d|%s" % (
+	simple_name_x, fighter_x.hp, fighter_x.shield, fighter_x.mp, fighter_x.counter,
+	blank1, commentary, blank2,
+	fighter_y.counter, fighter_y.mp, fighter_y.shield, fighter_y.hp, simple_name_y))

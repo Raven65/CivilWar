@@ -4,7 +4,7 @@
 # 每个函数中只考虑对方生命值以及自己怒气值和冷却的变化
 
 
-def do_nothing(src, dst, dst_action):
+def do_nothing(src, dst):
 	"""待机
 	Args:
 		src: 技能释放者
@@ -14,41 +14,86 @@ def do_nothing(src, dst, dst_action):
 	return
 
 
-def simple_attack(src, dst, dst_action):
+"""
+普通攻击，对方掉3点血，先扣护盾再扣生命值
+"""
+
+
+def simple_attack(src, dst):
 	"""普通攻击"""
-	if dst_action != "counter attack" and dst_action != "defend":
-		dst.hp -= 2
-	elif dst_action == "counter attack":
-		dst.hp -= 1
+	if dst.counter:
+		if src.shield >= 4:
+			src.shield -= 4
+		else:
+			src.hp -= (4 - src.shield)
+			src.shield = 0
+			src.mp += 1
+		dst.counter = 0
 
-	src.mp += 1
-	src.update()
-	dst.update()
-
-
-def simple_defend(src, dst, dst_action):
-	"""普通防御"""
-	src.cd -= 1
-	src.update()
-	dst.update()
-
-
-def counter_attack(src, dst, dst_action):
-	"""防守反击"""
-	if dst_action == "attack":
-		dst.hp -= 7
-	src.cd = 4
-	src.update()
-	dst.update()
-
-
-def super_attack(src, dst, dst_action):
-	"""超级攻击"""
-	if dst_action == "defend":
-		dst.hp -= 3
+	elif dst.shield >= 3:
+		dst.shield -= 3
 	else:
-		dst.hp -= 8
-	src.mp -= 4
+		dst.hp -= (3 - dst.shield)
+		dst.shield = 0
+		dst.mp += 1
+	if src.counter:
+		src.counter -= 1
+	src.mp += 2
+	src.update()
+	dst.update()
+
+
+"""
+防御，为自己增加2点护盾
+"""
+
+
+def simple_defend(src, dst):
+	"""普通防御"""
+	if src.counter:
+		src.counter -= 1
+	src.shield += 2
+	src.update()
+	dst.update()
+
+
+"""
+为自己增加2点护盾值并增加一个持续2回合的反弹护盾，对方的普通攻击同时会使对方护甲/生命值减少4点
+"""
+
+
+def counter_attack(src, dst):
+	"""防守反击"""
+	if src.mp < 4:
+		do_nothing(src, dst)
+	else:
+		src.shield += 2
+		src.counter = 2
+		src.mp -= 4
+	src.update()
+	dst.update()
+
+
+"""
+超级攻击，无视护盾值直接使对方生命值减少8点，若对方身上有反弹护盾，则使对方生命值减少3点并抵消反弹护盾。
+"""
+
+
+def super_attack(src, dst):
+	"""超级攻击"""
+	if src.counter:
+		src.counter -= 1
+	if src.mp < 6:
+		do_nothing(src, dst)
+	else:
+		src.mp -= 6
+		if not dst.counter:
+			dst.hp -= 8
+			dst.mp += 1
+		else:
+			dst.hp -= 3
+			dst.counter = 0
+		dst.mp += 1
 
 	src.update()
 	dst.update()

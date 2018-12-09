@@ -13,7 +13,8 @@ class Fighter():
 		self.name = name
 		self.hp = settings.max_hp
 		self.mp = 0
-		self.cd = 0
+		self.shield = 0
+		self.counter = 0
 		self.max_hp = settings.max_hp
 		self.max_mp = settings.max_mp
 		self.act_command = [str(x) for x in range(settings.min_act, settings.max_act + 1)]
@@ -21,7 +22,6 @@ class Fighter():
 
 	def update(self):
 		"""防止属性变化超过边界"""
-		self.cd = max(self.cd, 0)
 		self.hp = max(self.hp, 0)
 		self.mp = min(self.mp, self.max_mp)
 
@@ -35,13 +35,13 @@ class Fighter():
 		"""
 		while mode == "random":  # 自动战斗
 			action = random.randint(1, 300)
-			if not self.cd:
-				if action > 100:
+			if self.mp >= 4:
+				if action > 150:
 					continue
 				else:
 					return "counter attack"
-			if self.mp == 4:
-				if action > 100:
+			if self.mp >= 6:
+				if action > 150:
 					continue
 				else:
 					return "super attack"
@@ -67,9 +67,9 @@ class Fighter():
 
 	def minimax(self, enemy, player, enemy_move):
 		move = ["attack", "defend"]
-		if not self.cd:
+		if self.mp >= 4:
 			move.append("counter attack")
-		if self.mp == 4:
+		if self.mp >= 6:
 			move.append("super attack")
 		max_val = -30
 		min_val = 30
