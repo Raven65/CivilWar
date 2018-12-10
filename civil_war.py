@@ -21,23 +21,28 @@ if __name__ == '__main__':
 
 	# 初始化
 	settings = Settings()
-	tony = Fighter("Tony Stark", settings)
-	steven = Fighter("Steven Rogers", settings)
-	battle = Battle(tony, steven, settings)
-	while battle.round:
+	win = [0, 0, 0]
+	for i in range(100):
+		tony = Fighter("Tony Stark", settings)
+		steven = Fighter("Steven Rogers", settings)
+		battle = Battle(tony, steven, settings)
+		while battle.round:
 
-		# 获取战斗策略
-		tony_act = tony.fight_strategy(steven, tony_mode)
-		steven_act = steven.fight_strategy(tony, steven_mode)
+			# 获取战斗策略
+			tony_act = tony.fight_strategy(steven, tony_mode)
+			steven_act = steven.fight_strategy(tony, steven_mode)
 
-		# 进行战斗
-		fn.fight_function[tony_act](tony, steven, steven_act)
-		fn.fight_function[steven_act](steven, tony, tony_act)
+			# 进行战斗
+			fn.fight_function[tony_act](tony, steven, steven_act)
+			fn.fight_function[steven_act](steven, tony, tony_act)
 
-		# 键盘输出
-		cf.keyboard_output(settings, tony, steven, tony_act, steven_act)
+			# 键盘输出
+			cf.keyboard_output(settings, tony, steven, tony_act, steven_act)
 
-		# 判断胜负
-		battle.round -= 1
-		battle.check_winner()
-
+			# 判断胜负
+			battle.round -= 1
+			winner = battle.check_winner()
+			if winner:
+				break
+		win[winner - 1] += 1
+	print("TS won %d games, SR won %d gams, and %d games tied." % (win[0], win[1], win[2]))

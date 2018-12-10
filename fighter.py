@@ -45,25 +45,27 @@ class Fighter():
 					continue
 				else:
 					return "super attack"
-			if action > 180:
+			if action > 50:
 				return "defend"
 			else:
 				return "attack"
 		if mode == "minimax":
 			return self.minimax(enemy, 0, "stand by")
 		# 询问用户键盘输入操作指令
-		act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
-								   str(value) in self.act_command]).strip().strip(",") + ")"
-		action = cf.choose_input("Choose your next move for %s" % self.name, self.act_command, act_intro)
-		# 对特殊技能做判断，若不满足条件则待机
-		if int(action) == self.actions["counter attack"] and self.cd != 0:
-			print("You can't counter attack now (Your cd is not 0.), you will do nothing in this round.")
-			return "do nothing"
-		if int(action) == self.actions["super attack"] and self.mp != 4:
-			print("You can't super attack now (Your mp is not 4.), you will do nothing in this round.")
-			return "do nothing"
-		new_action_dict = {v: k for k, v in self.actions.items()}
-		return new_action_dict[int(action)]
+		if mode == "user":
+
+			act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
+									   str(value) in self.act_command]).strip().strip(",") + ")"
+			action = cf.choose_input("Choose your next move for %s" % self.name, self.act_command, act_intro)
+			# 对特殊技能做判断，若不满足条件则待机
+			if int(action) == self.actions["counter attack"] and self.cd != 0:
+				print("You can't counter attack now (Your cd is not 0.), you will do nothing in this round.")
+				return "do nothing"
+			if int(action) == self.actions["super attack"] and self.mp != 4:
+				print("You can't super attack now (Your mp is not 4.), you will do nothing in this round.")
+				return "do nothing"
+			new_action_dict = {v: k for k, v in self.actions.items()}
+			return new_action_dict[int(action)]
 
 	def minimax(self, enemy, player, enemy_move):
 
