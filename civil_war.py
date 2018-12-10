@@ -9,7 +9,7 @@ import common_function as cf
 if __name__ == '__main__':
 	print("Welcome to the Civil War of the Avengers.")
 	mode = cf.choose_input("Automatically fight?", ["y", "n"], "(y/n)")  # 询问是否开启自动战斗
-	tony_mode = "random"
+	tony_mode = "minimax"
 	steven_mode = "random"
 	if mode == 'n':
 		choice = cf.choose_input("Who do you want to stand for?", ["t", "s"],
@@ -21,24 +21,31 @@ if __name__ == '__main__':
 
 	# 初始化
 	settings = Settings()
-	tony = Fighter("Tony Stark", settings)
-	steven = Fighter("Steven Rogers", settings)
-	battle = Battle(tony, steven, settings)
-	while battle.round:
-		# 获取战斗策略
-		tony_act = tony.fight_strategy(steven, tony_mode)
-		# 进行战斗
-		fn.fight_function[tony_act](tony, steven)
-		# 键盘输出
-		cf.keyboard_output(settings, tony, steven, tony_act, 1)
-		if battle.check_winner():
-			break
-		# 获取战斗策略
-		steven_act = steven.fight_strategy(tony, steven_mode)
-		# 进行战斗
-		fn.fight_function[steven_act](steven, tony)
-		# 键盘输出
-		cf.keyboard_output(settings, tony, steven, steven_act, 0)
-		# 判断胜负
-		battle.round -= 1
-		battle.check_winner()
+	win = [0,0,0]
+	for i in range(100):
+		tony = Fighter("Tony Stark", settings)
+		steven = Fighter("Steven Rogers", settings)
+		battle = Battle(tony, steven, settings)
+		while battle.round:
+			# 获取战斗策略
+			tony_act = tony.fight_strategy(steven, tony_mode)
+			# 进行战斗
+			fn.fight_function[tony_act](tony, steven)
+			# 键盘输出
+			#cf.keyboard_output(settings, tony, steven, tony_act, 1)
+			winner = battle.check_winner()
+			if winner:
+				break
+			# 获取战斗策略
+			steven_act = steven.fight_strategy(tony, steven_mode)
+			# 进行战斗
+			fn.fight_function[steven_act](steven, tony)
+			# 键盘输出
+			#cf.keyboard_output(settings, tony, steven, steven_act, 0)
+			# 判断胜负
+			battle.round -= 1
+			winner = battle.check_winner()
+			if winner:
+				break
+		win[winner-1]+=1
+	print("TS won %d games, SR won %d games, and %d games tied."%(win[0],win[1],win[2]))

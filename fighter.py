@@ -35,66 +35,79 @@ class Fighter():
 		"""
 		while mode == "random":  # 自动战斗
 			action = random.randint(1, 300)
-			if self.mp >= 4:
+			if self.mp >= 6:
+				if action > 120:
+					continue
+				else:
+					return "super attack"
+			elif self.mp >= 4:
 				if action > 150:
 					continue
 				else:
 					return "counter attack"
-			if self.mp >= 6:
-				if action > 150:
-					continue
-				else:
-					return "super attack"
-			if action > 180:
+			if action > 200:
 				return "defend"
 			else:
 				return "attack"
 		if mode == "minimax":
-			return self.minimax(enemy, 0, "stand by")
-		# 询问用户键盘输入操作指令
-		act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
-								   str(value) in self.act_command]).strip().strip(",") + ")"
-		action = cf.choose_input("Choose your next move for %s" % self.name, self.act_command, act_intro)
-		# 对特殊技能做判断，若不满足条件则待机
-		if int(action) == self.actions["counter attack"] and self.cd != 0:
-			print("You can't counter attack now (Your cd is not 0.), you will do nothing in this round.")
-			return "do nothing"
-		if int(action) == self.actions["super attack"] and self.mp != 4:
-			print("You can't super attack now (Your mp is not 4.), you will do nothing in this round.")
-			return "do nothing"
-		new_action_dict = {v: k for k, v in self.actions.items()}
-		return new_action_dict[int(action)]
+			return self.minimax(self, enemy, 0, 4, -30, 30)[1];
+		if mode == "user":
+			# 询问用户键盘输入操作指令
+			act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
+									   str(value) in self.act_command]).strip().strip(",") + ")"
+			action = cf.choose_input("Choose your next move for %s" % self.name, self.act_command, act_intro)
+			# 对特殊技能做判断，若不满足条件则待机
+			if int(action) == self.actions["counter attack"] and self.mp < 4:
+				print("You can't counter attack now (Your mp is below 4.), you will do nothing in this round.")
+				return "do nothing"
+			if int(action) == self.actions["super attack"] and self.mp < 6:
+				print("You can't super attack now (Your mp is below 4.), you will do nothing in this round.")
+				return "do nothing"
+			new_action_dict = {v: k for k, v in self.actions.items()}
+			return new_action_dict[int(action)]
 
-	def minimax(self, enemy, player, enemy_move):
-		move = ["attack", "defend"]
-		if self.mp >= 4:
-			move.append("counter attack")
-		if self.mp >= 6:
-			move.append("super attack")
-		max_val = -30
-		min_val = 30
-		for x in move:
-			if player == 0:
-				temp_a = copy.deepcopy(self)
-				temp_b = copy.deepcopy(enemy)
-				enemy_move = self.minimax(enemy, 1, x)
-				fn.fight_function[x](temp_a, temp_b, enemy_move)
-				fn.fight_function[enemy_move](temp_b, temp_a, x)
-				val = temp_a.hp - temp_b.hp
-				if val >= max_val:
-					max_val = val
+	def minimax(self, a, b, player, round, alpha, beta):
+		if round == 0:
+			return [a.hp-b.hp,"stand by"]
+		if a.hp ==0 or b.hp ==0:
+			return [a.hp-b.hp,"stand by"]
+		if player == 0:
+			move = ["attack", "defend"]
+			if a.mp >= 4:
+				move.append("counter attack")
+			if a.mp >= 6:
+				move.append("super attack")
+			best_move = move[0]
+			for x in move:
+				temp_a = copy.deepcopy(a)
+				temp_b = copy.deepcopy(b)
+				fn.fight_function[x](temp_a, temp_b)
+				res = self.minimax(temp_a,temp_b,1,round-1,alpha,beta)
+				if res[0] > alpha:
+					alpha = res[0]
 					best_move = x
+				if alpha >=beta:
+					return [alpha,best_move]
 				del temp_a
 				del temp_b
-			elif player == 1:
-				temp_a = copy.deepcopy(self)
-				temp_b = copy.deepcopy(enemy)
-				fn.fight_function[x](temp_b, temp_a, enemy_move)
-				fn.fight_function[enemy_move](temp_a, temp_b, x)
-				val = temp_a.hp - temp_b.hp
-				if val <= min_val:
-					min_val = val
+			return [alpha, best_move]
+		elif player == 1:
+			move = ["attack", "defend"]
+			if b.mp >= 4:
+				move.append("counter attack")
+			if b.mp >= 6:
+				move.append("super attack")
+			best_move = move[0]
+			for x in move:
+				temp_a = copy.deepcopy(a)
+				temp_b = copy.deepcopy(b)
+				fn.fight_function[x](temp_b, temp_a)
+				res = self.minimax(temp_a, temp_b, 0, round - 1, alpha, beta)
+				if res[0] < beta:
+					beta = res[0]
 					best_move = x
+				if alpha >= beta:
+					return [beta, best_move]
 				del temp_a
 				del temp_b
-		return best_move
+			return [beta, best_move]
