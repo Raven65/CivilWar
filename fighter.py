@@ -63,10 +63,10 @@ class Fighter():
 			return new_action_dict[int(action)]
 
 	def minimax(self, a, b, player, round, alpha, beta):
-		if round == 0:
-			return [a.hp-b.hp,"stand by"]
-		if a.hp ==0 or b.hp ==0:
-			return [a.hp-b.hp,"stand by"]
+		if round < 0:
+			return [a.hp - b.hp, "stand by"]
+		if a.hp <= 0 or b.hp <= 0:
+			return [a.hp - b.hp, "stand by"]
 		if player == 0:
 			move = ["attack", "defend"]
 			if a.mp >= 4:
@@ -78,12 +78,12 @@ class Fighter():
 				temp_a = copy.deepcopy(a)
 				temp_b = copy.deepcopy(b)
 				fn.fight_function[x](temp_a, temp_b)
-				res = self.minimax(temp_a,temp_b,1,round-1,alpha,beta)
+				res = self.minimax(temp_a, temp_b, 1, round - 1, alpha, beta)
 				if res[0] > alpha:
 					alpha = res[0]
 					best_move = x
-				if alpha >=beta:
-					return [alpha,best_move]
+				if alpha >= beta:
+					return [alpha, best_move]
 				del temp_a
 				del temp_b
 			return [alpha, best_move]
