@@ -37,15 +37,11 @@ class Fighter():
 			action = random.randint(1, 300)
 			if self.mp >= 6:
 				if action > 120:
-					continue
-				else:
 					return "super attack"
 			elif self.mp >= 4:
 				if action > 150:
-					continue
-				else:
 					return "counter attack"
-			if action > 200:
+			if action > 180:
 				return "defend"
 			else:
 				return "attack"
