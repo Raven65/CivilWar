@@ -64,9 +64,9 @@ class Fighter():
 
 	def minimax(self, a, b, player, round, alpha, beta):
 		if round < 0:
-			return [a.hp - b.hp, "stand by"]
+			return [a.hp - b.hp, ""]
 		if a.hp <= 0 or b.hp <= 0:
-			return [a.hp - b.hp, "stand by"]
+			return [a.hp - b.hp, ""]
 		if player == 0:
 			move = ["attack", "defend"]
 			if a.mp >= 4:
