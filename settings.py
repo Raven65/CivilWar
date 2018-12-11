@@ -7,9 +7,9 @@ class Settings():
 	"""
 
 	def __init__(self):
-		self.max_hp = 30
+		self.max_hp = 20
 		self.max_mp = 10
-		self.max_cdr = 4
+		self.max_shield = 10
 		self.max_round = 50
 		self.max_comment = 90
 		self.sta_length = 10

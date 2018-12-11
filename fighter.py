@@ -17,6 +17,7 @@ class Fighter():
 		self.counter = 0
 		self.max_hp = settings.max_hp
 		self.max_mp = settings.max_mp
+		self.max_shield = settings.max_shield
 		self.act_command = [str(x) for x in range(settings.min_act, settings.max_act + 1)]
 		self.actions = settings.actions
 
@@ -24,8 +25,9 @@ class Fighter():
 		"""防止属性变化超过边界"""
 		self.hp = max(self.hp, 0)
 		self.mp = min(self.mp, self.max_mp)
+		self.shield = min(self.shield, self.max_shield)
 
-	def fight_strategy(self, enemy, mode):
+	def fight_strategy(self, enemy, mode, p=50):
 		"""战斗策略选择
 		Args:
 			enemy: 敌人
@@ -34,14 +36,14 @@ class Fighter():
 			action: 返回战斗动作，字符串
 		"""
 		while mode == "random":  # 自动战斗
-			action = random.randint(1, 300)
+			action = random.randint(1, 100)
 			if self.mp >= 6:
-				if action > 120:
+				if action > 50:
 					return "super attack"
 			elif self.mp >= 4:
-				if action > 150:
+				if action <= 50:
 					return "counter attack"
-			if action > 180:
+			if action > p:
 				return "defend"
 			else:
 				return "attack"

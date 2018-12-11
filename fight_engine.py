@@ -15,7 +15,7 @@ def do_nothing(src, dst):
 
 
 """
-普通攻击，对方掉2点血，先扣护盾再扣生命值
+普通攻击，对方掉3点血，先扣护盾再扣生命值，增加2点mp
 """
 
 
@@ -30,10 +30,10 @@ def simple_attack(src, dst):
 			src.mp += 1
 		dst.counter = 0
 
-	elif dst.shield >= 2:
-		dst.shield -= 2
+	elif dst.shield >= 3:
+		dst.shield -= 3
 	else:
-		dst.hp -= (2 - dst.shield)
+		dst.hp -= (3 - dst.shield)
 		dst.shield = 0
 		dst.mp += 1
 	if src.counter:
@@ -44,7 +44,7 @@ def simple_attack(src, dst):
 
 
 """
-防御，为自己增加2点护盾
+防御，为自己增加2点护盾, 增加1点mp
 """
 
 
@@ -53,6 +53,7 @@ def simple_defend(src, dst):
 	if src.counter:
 		src.counter -= 1
 	src.shield += 2
+	src.mp += 1
 	src.update()
 	dst.update()
 
@@ -75,7 +76,7 @@ def counter_attack(src, dst):
 
 
 """
-超级攻击，无视护盾值直接使对方生命值减少6点，若对方身上有反弹护盾，则使对方生命值减少3点并抵消反弹护盾。
+超级攻击，无视护盾值直接使对方生命值减少6点，若对方身上有反弹护盾，则使对方生命值减少2点并抵消反弹护盾。
 """
 
 
@@ -89,9 +90,8 @@ def super_attack(src, dst):
 		src.mp -= 6
 		if not dst.counter:
 			dst.hp -= 6
-			dst.mp += 1
 		else:
-			dst.hp -= 3
+			dst.hp -= 2
 			dst.counter = 0
 		dst.mp += 1
 
