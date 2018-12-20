@@ -3,13 +3,15 @@ import random
 import common_function as cf
 import copy
 import fight_engine as fn
+import pygame
+from pygame.sprite import Sprite
 
-
-class Fighter():
+class Fighter(Sprite):
 	"""战斗者类
 	"""
 
-	def __init__(self, name, settings):
+	def __init__(self, name, settings, screen):
+		super().__init__()
 		self.name = name
 		self.hp = settings.max_hp
 		self.mp = 0
@@ -20,6 +22,38 @@ class Fighter():
 		self.max_shield = settings.max_shield
 		self.act_command = [str(x) for x in range(settings.min_act, settings.max_act + 1)]
 		self.actions = settings.actions
+
+		self.screen = screen
+		self.load_image(2)
+		self.point_me = False
+		self.control = False
+
+
+	def load_image(self,game_state):
+		if game_state==2:
+			self.image = pygame.image.load('sources/'+self.name+'_2.png')
+			self.rect = self.image.get_rect()
+			self.rect.center=self.screen.get_rect().center
+			if self.name == "Steven Rogers":
+				self.rect.centerx -=250
+			else:
+				self.rect.centerx +=250
+			self.rect.centery += 100
+		elif game_state == 3:
+			self.image = pygame.image.load('sources/' + self.name + '_3.png')
+			self.rect = self.image.get_rect()
+			self.rect.center = self.screen.get_rect().center
+			if self.name == "Steven Rogers":
+				self.rect.centerx -= 350
+			else:
+				self.rect.centerx += 350
+			self.rect.centery += 75
+		self.x = float(self.rect.x)
+
+	def blitme(self):
+		self.screen.blit(self.image, self.rect)
+		if self.point_me:
+			pygame.draw.rect(self.screen, [200, 0, 0], self.rect, 5)
 
 	def update(self):
 		"""防止属性变化超过边界"""
@@ -66,9 +100,9 @@ class Fighter():
 
 	def minimax(self, a, b, player, round, alpha, beta):
 		if round < 0:
-			return [a.hp - b.hp, ""]
+			return [a.hp - b.hp, "do nothing"]
 		if a.hp <= 0 or b.hp <= 0:
-			return [a.hp - b.hp, ""]
+			return [a.hp - b.hp, "do nothing"]
 		if player == 0:
 			move = ["attack", "defend"]
 			if a.mp >= 4:

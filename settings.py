@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pygame
 
 class Settings():
 	"""全局设定类
@@ -23,3 +23,9 @@ class Settings():
 		}
 		self.max_act = 4
 		self.min_act = 1
+
+		self.screen_width = 1280
+		self.screen_height = 720
+		self.bg_color = (230, 230, 230)
+
+
