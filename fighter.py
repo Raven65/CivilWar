@@ -26,7 +26,7 @@ class Fighter(Sprite):
 		self.screen = screen
 		self.load_image(2)
 		self.point_me = False
-		self.control = False
+		self.mode = "easy"
 
 
 	def load_image(self,game_state):
@@ -61,7 +61,7 @@ class Fighter(Sprite):
 		self.mp = min(self.mp, self.max_mp)
 		self.shield = min(self.shield, self.max_shield)
 
-	def fight_strategy(self, enemy, mode, p=50):
+	def fight_strategy(self, enemy, p=50):
 		"""战斗策略选择
 		Args:
 			enemy: 敌人
@@ -69,7 +69,7 @@ class Fighter(Sprite):
 		Returns:
 			action: 返回战斗动作，字符串
 		"""
-		while mode == "random":  # 自动战斗
+		while self.mode == "Easy":  # 自动战斗
 			action = random.randint(1, 100)
 			if self.mp >= 6:
 				if action > 50:
@@ -81,9 +81,9 @@ class Fighter(Sprite):
 				return "defend"
 			else:
 				return "attack"
-		if mode == "minimax":
+		if self.mode == "Normal":
 			return self.minimax(self, enemy, 0, 4, -30, 30)[1];
-		if mode == "user":
+		if self.mode == "User":
 			# 询问用户键盘输入操作指令
 			act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
 									   str(value) in self.act_command]).strip().strip(",") + ")"

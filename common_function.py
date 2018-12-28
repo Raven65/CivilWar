@@ -53,28 +53,36 @@ def keyboard_output(settings, fighter_x, fighter_y, action, flag):
 		fighter_y.counter, fighter_y.mp, fighter_y.shield, fighter_y.hp, simple_name_y))
 
 
-def check_events(settings, screen, stats, bg, tony ,steven ,play_button):
+def check_events(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button):
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()
-
+		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 0:
+			mouse_x, mouse_y = pygame.mouse.get_pos()
+			settings.check_events(stats, battle, tony,steven,mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 1:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			check_play_button(settings, screen, stats, play_button, mouse_x, mouse_y)
+			check_button(settings, screen, stats, play_button, settings_button, mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEMOTION and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			check_choose_point(settings, screen, stats, tony,steven,mouse_x, mouse_y)
+			check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			check_choose_side(settings, screen, stats, bg, tony,steven,mouse_x, mouse_y)
+			check_choose_side(settings, screen, stats, bg, tony, steven, mouse_x, mouse_y)
 
-def check_play_button(settings, screen, stats, play_button, mouse_x, mouse_y):
-	button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
-	if button_clicked:
+
+def check_button(settings, screen, stats, play_button, settings_button, mouse_x, mouse_y):
+	play_button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
+	settings_button_clicked = settings_button.rect.collidepoint(mouse_x, mouse_y)
+	if play_button_clicked:
 		stats.game_state = 2
+	elif settings_button_clicked:
+		stats.game_state = 0
+
+
 def check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y):
-	point_s = steven.rect.collidepoint(mouse_x,mouse_y)
-	point_t = tony.rect.collidepoint(mouse_x,mouse_y)
+	point_s = steven.rect.collidepoint(mouse_x, mouse_y)
+	point_t = tony.rect.collidepoint(mouse_x, mouse_y)
 	if point_s:
 		steven.point_me = True
 	else:
@@ -83,9 +91,11 @@ def check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y):
 		tony.point_me = True
 	else:
 		tony.point_me = False
+
+
 def check_choose_side(settings, screen, stats, bg, tony, steven, mouse_x, mouse_y):
-	point_s = steven.rect.collidepoint(mouse_x,mouse_y)
-	point_t = tony.rect.collidepoint(mouse_x,mouse_y)
+	point_s = steven.rect.collidepoint(mouse_x, mouse_y)
+	point_t = tony.rect.collidepoint(mouse_x, mouse_y)
 	if point_s or point_t:
 		stats.game_state = 3
 		tony.load_image(stats.game_state)
@@ -93,32 +103,39 @@ def check_choose_side(settings, screen, stats, bg, tony, steven, mouse_x, mouse_
 		bg.bg = pygame.image.load('sources/bg_3.jpg')
 		bg.bg.set_alpha(230)
 		if point_t:
-			tony.control= True
+			tony.mode = "User"
+			steven.mode = settings.mode_list[settings.mode]
 			tony.point_me = False
 		else:
-			steven.control = True
+			steven.mode = "User"
+			tony.mode = settings.mode_list[settings.mode]
 			steven.point_me = False
 
-def drawText(screen,text, posx, posy, textHeight=48, fontColor=(0, 0, 0), backgroudColor=(255, 255, 255)):
-	fontObj = pygame.font.SysFont(None, textHeight)  # 通过字体文件获得字体对象
+
+def drawText(screen, text, posx, posy, textHeight=32, fontColor=(0, 0, 0), backgroudColor=(255, 255, 255)):
+	fontObj = pygame.font.Font("No-move.ttf", textHeight)  # 通过字体文件获得字体对象
 	textSurfaceObj = fontObj.render(text, True, fontColor, backgroudColor)  # 配置要显示的文字
 	textRectObj = textSurfaceObj.get_rect()  # 获得要显示的对象的rect
 	textRectObj.center = (posx, posy)  # 设置显示对象的坐标
-	textSurfaceObj.set_colorkey((255,255,255))
+	textSurfaceObj.set_colorkey((255, 255, 255))
 	screen.blit(textSurfaceObj, textRectObj)  # 绘制字
 
 
-def update_screen(settings, screen,  stats, bg, tony, steven, play_button):
+def update_screen(settings, screen, stats, bg, bar, battle, tony, steven, play_button, settings_button):
 	bg.blitme(stats)
-	if stats.game_state == 1:
+	if stats.game_state == 0:
+		settings.blitme()
+	elif stats.game_state == 1:
 		play_button.draw_button()
-
+		settings_button.draw_button()
 	else:
 		tony.blitme()
 		steven.blitme()
 
-
 	if stats.game_state == 2:
-		drawText(screen, "Choose Your Side!", 640, 230, fontColor=(240, 0, 0))
+		drawText(screen, "Choose Your Side!", 640, 230, fontColor=(150, 0, 0))
+	if stats.game_state == 3:
+		drawText(screen, str(battle.round), 640, 170, fontColor=(150, 0, 0))
+		bar.blitme(steven, tony)
 
 	pygame.display.flip()
