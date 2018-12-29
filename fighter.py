@@ -5,6 +5,8 @@ import copy
 import fight_engine as fn
 import pygame
 from pygame.sprite import Sprite
+from action_bar import ActionBar
+
 
 class Fighter(Sprite):
 	"""战斗者类
@@ -27,17 +29,28 @@ class Fighter(Sprite):
 		self.load_image(2)
 		self.point_me = False
 		self.mode = "easy"
+		self.action_bar = ActionBar(settings, screen, self)
 
+	def reset(self, settings):
+		self.hp = settings.max_hp
+		self.mp = 0
+		self.shield = 0
+		self.counter = 0
+		self.max_hp = settings.max_hp
+		self.max_mp = settings.max_mp
+		self.max_shield = settings.max_shield
+		self.point_me = False
+		self.mode = settings.mode
 
-	def load_image(self,game_state):
-		if game_state==2:
-			self.image = pygame.image.load('sources/'+self.name+'_2.png')
+	def load_image(self, game_state):
+		if game_state == 2:
+			self.image = pygame.image.load('sources/' + self.name + '_2.png')
 			self.rect = self.image.get_rect()
-			self.rect.center=self.screen.get_rect().center
+			self.rect.center = self.screen.get_rect().center
 			if self.name == "Steven Rogers":
-				self.rect.centerx -=250
+				self.rect.centerx -= 250
 			else:
-				self.rect.centerx +=250
+				self.rect.centerx += 250
 			self.rect.centery += 100
 		elif game_state == 3:
 			self.image = pygame.image.load('sources/' + self.name + '_3.png')
@@ -61,6 +74,20 @@ class Fighter(Sprite):
 		self.mp = min(self.mp, self.max_mp)
 		self.shield = min(self.shield, self.max_shield)
 
+	def act(self, battle, enemy, p=50):
+		if self.mode == "User":
+			if battle.waiting == self and self.action_bar.choose != "do nothing":
+				temp = self.action_bar.choose
+				self.action_bar.choose = "do nothing"
+				return temp
+			else:
+				return "do nothing"
+		else:
+			if battle.waiting == self:
+				return self.fight_strategy(enemy, p)
+			else:
+				return "do nothing"
+
 	def fight_strategy(self, enemy, p=50):
 		"""战斗策略选择
 		Args:
@@ -82,21 +109,22 @@ class Fighter(Sprite):
 			else:
 				return "attack"
 		if self.mode == "Normal":
-			return self.minimax(self, enemy, 0, 4, -30, 30)[1];
-		if self.mode == "User":
-			# 询问用户键盘输入操作指令
-			act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
-									   str(value) in self.act_command]).strip().strip(",") + ")"
-			action = cf.choose_input("Choose your next move for %s" % self.name, self.act_command, act_intro)
-			# 对特殊技能做判断，若不满足条件则待机
-			if int(action) == self.actions["counter attack"] and self.mp < 4:
-				print("You can't counter attack now (Your mp is below 4.), you will do nothing in this round.")
-				return "do nothing"
-			if int(action) == self.actions["super attack"] and self.mp < 6:
-				print("You can't super attack now (Your mp is below 4.), you will do nothing in this round.")
-				return "do nothing"
-			new_action_dict = {v: k for k, v in self.actions.items()}
-			return new_action_dict[int(action)]
+			return self.minimax(self, enemy, 0, 8, -30, 30)[1];
+
+	# if self.mode == "User":
+	# 	# 询问用户键盘输入操作指令
+	# 	act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
+	# 							   str(value) in self.act_command]).strip().strip(",") + ")"
+	# 	action = cf.choose_input("Choose your next move for %s" % self.name, self.act_command, act_intro)
+	# 	# 对特殊技能做判断，若不满足条件则待机
+	# 	if int(action) == self.actions["counter attack"] and self.mp < 4:
+	# 		print("You can't counter attack now (Your mp is below 4.), you will do nothing in this round.")
+	# 		return "do nothing"
+	# 	if int(action) == self.actions["super attack"] and self.mp < 6:
+	# 		print("You can't super attack now (Your mp is below 4.), you will do nothing in this round.")
+	# 		return "do nothing"
+	# 	new_action_dict = {v: k for k, v in self.actions.items()}
+	# 	return new_action_dict[int(action)]
 
 	def minimax(self, a, b, player, round, alpha, beta):
 		if round < 0:
@@ -111,8 +139,8 @@ class Fighter(Sprite):
 				move.append("super attack")
 			best_move = move[0]
 			for x in move:
-				temp_a = copy.deepcopy(a)
-				temp_b = copy.deepcopy(b)
+				temp_a = TempFighter(a)
+				temp_b = TempFighter(b)
 				fn.fight_function[x](temp_a, temp_b)
 				res = self.minimax(temp_a, temp_b, 1, round - 1, alpha, beta)
 				if res[0] > alpha:
@@ -131,8 +159,8 @@ class Fighter(Sprite):
 				move.append("super attack")
 			best_move = move[0]
 			for x in move:
-				temp_a = copy.deepcopy(a)
-				temp_b = copy.deepcopy(b)
+				temp_a = TempFighter(a)
+				temp_b = TempFighter(b)
 				fn.fight_function[x](temp_b, temp_a)
 				res = self.minimax(temp_a, temp_b, 0, round - 1, alpha, beta)
 				if res[0] < beta:
@@ -143,3 +171,22 @@ class Fighter(Sprite):
 				del temp_a
 				del temp_b
 			return [beta, best_move]
+
+
+class TempFighter():
+	def __init__(self, fighter):
+		self.name = fighter.name
+		self.hp = fighter.hp
+		self.mp = fighter.mp
+		self.shield = fighter.shield
+		self.counter = fighter.counter
+		self.max_hp = fighter.max_hp
+		self.max_mp = fighter.max_mp
+		self.max_shield = fighter.max_shield
+		self.act_command = fighter.act_command
+		self.actions = fighter.actions
+
+	def update(self):
+		self.hp = max(self.hp, 0)
+		self.mp = min(self.mp, self.max_mp)
+		self.shield = min(self.shield, self.max_shield)

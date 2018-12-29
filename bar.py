@@ -46,12 +46,14 @@ class Bar():
 
 		x_hp_rect = pygame.Rect(0, 0, 340 * x.hp / self.settings.max_hp, 30)
 		x_hp_rect.center = self.x_hp_rect.center
+		x_hp_rect.left = self.x_hp_rect.left +3
 		pygame.draw.rect(self.screen, [210, 30, 30], x_hp_rect, 0)
 		cf.drawText(self.screen, str(x.hp), x_hp_rect.centerx, x_hp_rect.centery, textHeight=40,
 					fontColor=(255, 255, 255))
 
 		y_hp_rect = pygame.Rect(0, 0, 340 * y.hp / self.settings.max_hp, 30)
 		y_hp_rect.center = self.y_hp_rect.center
+		y_hp_rect.right = self.y_hp_rect.right -3
 		pygame.draw.rect(self.screen, [210, 30, 30], y_hp_rect, 0)
 		cf.drawText(self.screen, str(y.hp), y_hp_rect.centerx, y_hp_rect.centery, textHeight=40,
 					fontColor=(255, 255, 255))

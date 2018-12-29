@@ -40,8 +40,7 @@ class Settings():
 									   screen.get_rect().centery)
 		self.set_mode = ChangeableVar(self, "mode", screen, screen.get_rect().centerx + 80,
 									  screen.get_rect().centery + 100)
-		self.button = Button(self, screen, "Done")
-		self.button.rect.centery += 250
+		self.button = Button(self, screen, "Done", y=250)
 
 	def blitme(self):
 		self.set_hp.blitme()

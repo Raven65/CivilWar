@@ -53,44 +53,73 @@ def keyboard_output(settings, fighter_x, fighter_y, action, flag):
 		fighter_y.counter, fighter_y.mp, fighter_y.shield, fighter_y.hp, simple_name_y))
 
 
-def check_events(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button):
+def check_events(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button):
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 0:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			settings.check_events(stats, battle, tony,steven,mouse_x, mouse_y)
+			settings.check_events(stats, battle, tony, steven, mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 1:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			check_button(settings, screen, stats, play_button, settings_button, mouse_x, mouse_y)
+			check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button,
+						 mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEMOTION and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_choose_side(settings, screen, stats, bg, tony, steven, mouse_x, mouse_y)
+		elif event.type == pygame.MOUSEMOTION and stats.game_state == 3:
+			mouse_x, mouse_y = pygame.mouse.get_pos()
+			check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y)
+		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 3:
+			mouse_x, mouse_y = pygame.mouse.get_pos()
+			check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button,
+						 mouse_x, mouse_y)
+		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 4:
+			mouse_x, mouse_y = pygame.mouse.get_pos()
+			check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button,
+						 mouse_x, mouse_y)
 
 
-def check_button(settings, screen, stats, play_button, settings_button, mouse_x, mouse_y):
-	play_button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
-	settings_button_clicked = settings_button.rect.collidepoint(mouse_x, mouse_y)
-	if play_button_clicked:
-		stats.game_state = 2
-	elif settings_button_clicked:
-		stats.game_state = 0
+def check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button, mouse_x,
+				 mouse_y):
+	if stats.game_state == 1:
+		play_button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
+		settings_button_clicked = settings_button.rect.collidepoint(mouse_x, mouse_y)
+		if play_button_clicked:
+			stats.game_state = 2
+		elif settings_button_clicked:
+			stats.game_state = 0
+	elif stats.game_state == 3:
+		if tony.mode == "User" and battle.waiting == tony:
+			tony.action_bar.check_choose(stats, mouse_x, mouse_y)
+		elif steven.mode == "User" and battle.waiting == steven:
+			steven.action_bar.check_choose(stats, mouse_x, mouse_y)
+	elif stats.game_state == 4:
+		return_button_clicked = return_button.rect.collidepoint(mouse_x, mouse_y)
+		if return_button_clicked:
+			stats.reset_games(settings,battle,tony,steven)
 
 
 def check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y):
-	point_s = steven.rect.collidepoint(mouse_x, mouse_y)
-	point_t = tony.rect.collidepoint(mouse_x, mouse_y)
-	if point_s:
-		steven.point_me = True
-	else:
-		steven.point_me = False
-	if point_t:
-		tony.point_me = True
-	else:
-		tony.point_me = False
+	if stats.game_state == 2:
+		point_s = steven.rect.collidepoint(mouse_x, mouse_y)
+		point_t = tony.rect.collidepoint(mouse_x, mouse_y)
+		if point_s:
+			steven.point_me = True
+		else:
+			steven.point_me = False
+		if point_t:
+			tony.point_me = True
+		else:
+			tony.point_me = False
+	elif stats.game_state == 3:
+		if tony.mode == "User":
+			tony.action_bar.check_point(mouse_x, mouse_y)
+		elif steven.mode == "User":
+			steven.action_bar.check_point(mouse_x, mouse_y)
 
 
 def check_choose_side(settings, screen, stats, bg, tony, steven, mouse_x, mouse_y):
@@ -103,6 +132,7 @@ def check_choose_side(settings, screen, stats, bg, tony, steven, mouse_x, mouse_
 		bg.bg = pygame.image.load('sources/bg_3.jpg')
 		bg.bg.set_alpha(230)
 		if point_t:
+
 			tony.mode = "User"
 			steven.mode = settings.mode_list[settings.mode]
 			tony.point_me = False
@@ -121,7 +151,7 @@ def drawText(screen, text, posx, posy, textHeight=32, fontColor=(0, 0, 0), backg
 	screen.blit(textSurfaceObj, textRectObj)  # 绘制字
 
 
-def update_screen(settings, screen, stats, bg, bar, battle, tony, steven, play_button, settings_button):
+def update_screen(settings, screen, stats, bg, bar, battle, tony, steven, play_button, settings_button, return_button):
 	bg.blitme(stats)
 	if stats.game_state == 0:
 		settings.blitme()
@@ -137,5 +167,17 @@ def update_screen(settings, screen, stats, bg, bar, battle, tony, steven, play_b
 	if stats.game_state == 3:
 		drawText(screen, str(battle.round), 640, 170, fontColor=(150, 0, 0))
 		bar.blitme(steven, tony)
+		if tony.mode == "User" and battle.waiting == tony:
+			tony.action_bar.blitme()
+		elif steven.mode == "User" and battle.waiting == steven:
+			steven.action_bar.blitme()
+	if stats.game_state == 4:
+		if battle.winner == 3:
+			drawText(screen, "There is no winner.", screen.get_rect().centerx, screen.get_rect().centery - 150)
+		elif battle.winner == 1:
+			drawText(screen, "The winner is Steven Rogers.", screen.get_rect().centerx, screen.get_rect().centery - 150)
+		elif battle.winner == 2:
+			drawText(screen, "The winner is Tony Starks.", screen.get_rect().centerx, screen.get_rect().centery - 150)
+		return_button.draw_button()
 
 	pygame.display.flip()
