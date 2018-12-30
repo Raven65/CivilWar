@@ -41,6 +41,7 @@ class Fighter(Sprite):
 		self.max_shield = settings.max_shield
 		self.point_me = False
 		self.mode = settings.mode
+		self.load_image(2)
 
 	def load_image(self, game_state):
 		if game_state == 2:

@@ -62,7 +62,7 @@ def check_events(settings, screen, stats, bg, battle, tony, steven, play_button,
 			settings.check_events(stats, battle, tony, steven, mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 1:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button,
+			check_button(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
 						 mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEMOTION and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -75,15 +75,15 @@ def check_events(settings, screen, stats, bg, battle, tony, steven, play_button,
 			check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 3:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button,
+			check_button(settings, screen, stats, bg,battle, tony, steven, play_button, settings_button, return_button,
 						 mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 4:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
-			check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button,
+			check_button(settings, screen, stats, bg,battle, tony, steven, play_button, settings_button, return_button,
 						 mouse_x, mouse_y)
 
 
-def check_button(settings, screen, stats, battle, tony, steven, play_button, settings_button, return_button, mouse_x,
+def check_button(settings, screen, stats,bg, battle, tony, steven, play_button, settings_button, return_button, mouse_x,
 				 mouse_y):
 	if stats.game_state == 1:
 		play_button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
@@ -100,7 +100,7 @@ def check_button(settings, screen, stats, battle, tony, steven, play_button, set
 	elif stats.game_state == 4:
 		return_button_clicked = return_button.rect.collidepoint(mouse_x, mouse_y)
 		if return_button_clicked:
-			stats.reset_games(settings,battle,tony,steven)
+			stats.reset_games(settings, bg, battle, tony, steven)
 
 
 def check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y):

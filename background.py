@@ -16,6 +16,10 @@ class Background():
 		self.bg = pygame.image.load('sources/bg.jpg')
 		self.bg.set_alpha(200)
 
+	def reset(self):
+		self.bg = pygame.image.load('sources/bg.jpg')
+		self.bg.set_alpha(200)
+
 	def blitme(self, stats):
 		self.screen.blit(self.title, self.title_rect)
 		if stats.game_state != 1:
