@@ -11,6 +11,7 @@ class Fighter():
 
 	def __init__(self, name, settings):
 		self.name = name
+		self.settings = settings
 		self.hp = settings.max_hp
 		self.mp = 0
 		self.shield = 0
@@ -51,6 +52,8 @@ class Fighter():
 			return self.minimax(self, enemy, 0, 4, -30, 30)[1];
 		if mode == "minimax_random":
 			return self.minimax_random_eva(self, enemy, 0, 4, -30, 30)[1];
+		if mode == "ga":
+			return self.ga_strategy(self,enemy)
 		if mode == "user":
 			# 询问用户键盘输入操作指令
 			act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
@@ -168,3 +171,39 @@ class Fighter():
 			return a.hp + a.mp - b.hp - b.mp
 		elif p == 4:
 			return a.hp + a.shield + a.mp - b.hp - b.mp - b.shield
+
+	def ga_strategy(self, a, b):
+		x = []
+		x.append(a.hp / self.settings.max_hp)
+		x.append(-b.hp / self.settings.max_hp)
+		x.append(a.mp / self.settings.max_mp)
+		x.append(-b.mp / self.settings.max_mp)
+		x.append(a.shield / self.settings.max_shield)
+		x.append(-b.shield / self.settings.max_shield)
+		x.append(a.counter / 2)
+		x.append(-b.counter / 2)
+		sum = 0
+		w = [[0.05281437564686202, 0.14945444383419904, 0.061709333866210504, 0.0336483111216646, 0.1954766897701734,
+			  0.09447417464023114, 0.030291538332920368, 0.3821311327877388],
+			 [0.062037083485515974, 0.09135377376095986, 0.03959110584785366, 0.09276071723180201, 0.16587356281164065,
+			  0.0891051796191564, 0.06410612998226826, 0.3951724472608032],
+			 [0.043508262346743376, 0.09781163425196711, 0.04778460845263359, 0.02605556195967209, 0.1516258718636814,
+			  0.08145150027715191, 0.1609901199716359, 0.3907724408765147],
+			 [0.055929239716951226, 0.1117450664854627, 0.04613923439642408, 0.020434184520557203, 0.11871046763056185,
+			  0.057372945407143085, 0.2573095466473337, 0.3323593151955663],
+			 [0.07306690549243638, 0.10759592777000697, 0.04663016742238634, 0.1092530173661229, 0.19536488913895392,
+			  0.10494754705287737, 0.07550381606823663, 0.28763772968897944]]
+		t = -0.0365201790437496
+		r = random.randint(0,4)
+		for i in range(8):
+			sum += x[i] * w[r][i]
+		if sum > t:
+			if a.mp < 6:
+				return "attack"
+			else:
+				return "super attack"
+		else:
+			if a.mp < 4 or a.counter:
+				return "defend"
+			else:
+				return "counter attack"
