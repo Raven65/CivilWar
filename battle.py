@@ -16,23 +16,23 @@ class Battle():
 			if not self.fighter_x.hp or not self.fighter_y.hp:
 				self.round = 0
 			if not self.fighter_x.hp and not self.fighter_y.hp:  # 同归于尽
-				print("They both died. There is no winner.")
+				#print("They both died. There is no winner.")
 				return 3
 			elif not self.fighter_y.hp:
-				print("%s died. The winner is %s." % (self.fighter_y.name, self.fighter_x.name))
+				#print("%s died. The winner is %s." % (self.fighter_y.name, self.fighter_x.name))
 				return 1
 			elif not self.fighter_x.hp:
-				print("%s died. The winner is %s." % (self.fighter_x.name, self.fighter_y.name))
+				#print("%s died. The winner is %s." % (self.fighter_x.name, self.fighter_y.name))
 				return 2
 			return 0
 		else:  # 回合已耗尽
-			print("Time's up.")
+			# print("Time's up.")
 			if self.fighter_x.hp > self.fighter_y.hp:
-				print("The winner is %s." % self.fighter_x.name)
+				#print("The winner is %s." % self.fighter_x.name)
 				return 1
 			elif self.fighter_x.hp == self.fighter_y.hp:
-				print("There is no winner.")
+				#print("There is no winner.")
 				return 3
 			else:
-				print("The winner is %s." % self.fighter_y.name)
+				#print("The winner is %s." % self.fighter_y.name)
 				return 2

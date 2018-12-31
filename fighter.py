@@ -48,9 +48,9 @@ class Fighter():
 			else:
 				return "attack"
 		if mode == "minimax":
-			return self.minimax(self, enemy, 0, 4, -30, 30)[1];
+			return self.minimax(self, enemy, 0, 2, -30, 30)[1];
 		if mode == "minimax_random":
-			return self.minimax_random_eva(self, enemy, 0, 4, -30, 30)[1];
+			return self.minimax_random_eva(self, enemy, 0, 2, -30, 30)[1];
 		if mode == "user":
 			# 询问用户键盘输入操作指令
 			act_intro = "(" + "".join([" %s:%s," % (str(value), key) for key, value in self.actions.items() if
