@@ -1,8 +1,9 @@
 import pygame.font
 import sys
 
+
 class Button():
-	def __init__(self, settings, screen, msg, font_height = 32,width=200, height=50, x=0, y=0, button_color=(160, 0, 0),
+	def __init__(self, settings, screen, msg, font_height=32, width=200, height=50, x=0, y=0, button_color=(160, 0, 0),
 				 text_color=(255, 255, 255)):
 		self.screen = screen
 		self.screen_rect = screen.get_rect()
@@ -31,10 +32,9 @@ class Button():
 		if self.point_me:
 			pygame.draw.rect(self.screen, [240, 240, 240], self.rect, 5)
 
-	def check_point(self,mouse_x,mouse_y):
+	def check_point(self, mouse_x, mouse_y):
 		point = self.rect.collidepoint(mouse_x, mouse_y)
 		if point:
-			self.point_me =True
+			self.point_me = True
 		else:
-			self.point_me =False
-
+			self.point_me = False

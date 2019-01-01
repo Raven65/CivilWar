@@ -54,13 +54,10 @@ class ActionBar():
 
 	def check_point(self, mouse_x, mouse_y):
 		for action_button in self.actions_buttons:
-			action_button.check_point(mouse_x,mouse_y)
+			action_button.check_point(mouse_x, mouse_y)
 
-	def check_choose(self,stats, mouse_x,mouse_y):
+	def check_choose(self, stats, mouse_x, mouse_y):
 		for i, action_button in enumerate(self.actions_buttons):
 			action_button_choose = action_button.rect.collidepoint(mouse_x, mouse_y)
 			if action_button_choose and self.actions_flag[i]:
 				self.choose = action_button.msg
-
-
-

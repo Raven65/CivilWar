@@ -11,6 +11,7 @@ class Battle():
 		self.waiting = x
 		self.round = settings.max_round
 		self.winner = 0
+
 	def reset(self, settings):
 		self.waiting = self.fighter_x
 		self.round = settings.max_round

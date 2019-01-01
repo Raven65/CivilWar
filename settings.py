@@ -30,7 +30,7 @@ class Settings():
 		self.screen_width = 1280
 		self.screen_height = 720
 		self.bg_color = (230, 230, 230)
-		self.mode_list = ["Easy", "Normal"]
+		self.mode_list = ["Easy", "Normal", "Hard"]
 		self.mode = 0
 
 	def prep_draw(self, screen):
@@ -98,5 +98,5 @@ class ChangeableVar():
 		if right_button_clicked:
 			if self.name != "mode":
 				setattr(self.settings, self.name, x + 1)
-			elif x < 1:
+			elif x < 2:
 				setattr(self.settings, self.name, x + 1)
