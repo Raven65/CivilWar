@@ -66,9 +66,9 @@ def check_events(settings, screen, stats, bg, battle, tony, steven, play_button,
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 1:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_button(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
-						 mouse_x, mouse_y)
+						 mouse_x, mouse_y,start_sound=start_sound)
 			press_sound.play()
-			start_sound.play()
+
 		elif event.type == pygame.MOUSEMOTION and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y)
@@ -90,13 +90,13 @@ def check_events(settings, screen, stats, bg, battle, tony, steven, play_button,
 
 
 def check_button(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
-				 mouse_x,
-				 mouse_y):
+				 mouse_x,mouse_y,start_sound = None):
 	if stats.game_state == 1:
 		play_button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
 		settings_button_clicked = settings_button.rect.collidepoint(mouse_x, mouse_y)
 		if play_button_clicked:
 			stats.game_state = 2
+			start_sound.play()
 		elif settings_button_clicked:
 			stats.game_state = 0
 	elif stats.game_state == 3:

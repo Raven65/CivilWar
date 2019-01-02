@@ -84,12 +84,11 @@ class Fighter(Sprite):
 		self.hit_rect.centery = self.rect.centery - 20
 	def blitme(self):
 		if self.counter:
-			pygame.draw.circle(self.screen, (51, 153, 230), self.rect.center, 140, 15)
+			pygame.draw.circle(self.screen, (51, 153, 230), self.rect.center, 120, 10)
 		self.screen.blit(self.image, self.rect)
 		if self.point_me:
 			pygame.draw.rect(self.screen, [200, 0, 0], self.rect, 5)
 		if self.been_hit:
-
 			self.screen.blit(self.hit, self.hit_rect)
 
 	def update(self):
