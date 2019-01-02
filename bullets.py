@@ -18,7 +18,7 @@ class Bullet(Sprite):
 			self.x = float(self.rect.x)
 
 			self.color = (255, 0, 51)
-			self.speed_factor = 30
+			self.speed_factor = 40
 			self.partner = pygame.image.load('sources/wm.png')
 			self.partner_rect = self.partner.get_rect()
 			self.partner_rect.center = tony.rect.center

@@ -21,12 +21,14 @@ if __name__ == '__main__':
 	settings = Settings()
 	pygame.init()
 	pygame.mixer.init()
+	start_sound = pygame.mixer.Sound("sources/start_fight.wav")
+	start_sound.set_volume(0.3)
 	s_hit_sound = pygame.mixer.Sound("sources/s_hit.wav")
 	s_hit_sound.set_volume(0.2)
 	t_hit_sound = pygame.mixer.Sound("sources/t_hit.wav")
 	t_hit_sound.set_volume(0.2)
 	press_sound = pygame.mixer.Sound("sources/press.wav")
-	press_sound.set_volume(0.4)
+	press_sound.set_volume(0.3)
 	pygame.mixer.music.load("sources/Angels Will Rise.mp3")
 	pygame.mixer.music.set_volume(0.2)
 	screen = pygame.display.set_mode(
@@ -48,12 +50,13 @@ if __name__ == '__main__':
 	battle = Battle(steven, tony, settings)
 	act = ""
 	while True:
-		cf.check_events(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,press_sound)
+		cf.check_events(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
+						press_sound, start_sound)
 		if pygame.mixer.music.get_busy() == False:
 			pygame.mixer.music.play()
 		if stats.game_state == 3:
 			if battle.waiting == steven:
-				pygame.time.wait(50)
+				pygame.time.wait(100)
 				steven_act = steven.act(battle, tony, 50)
 
 				if steven_act != "do nothing":
@@ -65,7 +68,7 @@ if __name__ == '__main__':
 					cf.keyboard_output(settings, steven, tony, steven_act, 1)
 
 			elif battle.waiting == tony:
-				pygame.time.wait(50)
+				pygame.time.wait(100)
 				tony_act = tony.act(battle, steven, 50)
 				if tony_act != "do nothing":
 					act = tony_act
@@ -77,7 +80,7 @@ if __name__ == '__main__':
 				stats.game_state = 4
 		if stats.game_state == 5:
 			cf.update_bullets(settings, screen, stats, battle, steven, tony, steven_bullets, tony_bullets, act,
-							  s_hit_sound,t_hit_sound)
+							  s_hit_sound, t_hit_sound)
 
 		cf.update_screen(settings, screen, stats, bg, bar, battle, tony, steven, play_button, settings_button,
 						 return_button, steven_bullets, tony_bullets)

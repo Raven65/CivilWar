@@ -55,7 +55,7 @@ def keyboard_output(settings, fighter_x, fighter_y, action, flag):
 
 
 def check_events(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
-				 press_sound):
+				 press_sound, start_sound):
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()
@@ -68,13 +68,13 @@ def check_events(settings, screen, stats, bg, battle, tony, steven, play_button,
 			check_button(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
 						 mouse_x, mouse_y)
 			press_sound.play()
+			start_sound.play()
 		elif event.type == pygame.MOUSEMOTION and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y)
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 2:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_choose_side(settings, screen, stats, bg, tony, steven, mouse_x, mouse_y)
-			press_sound.play()
 		elif event.type == pygame.MOUSEMOTION and stats.game_state == 3:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_choose_point(settings, screen, stats, tony, steven, mouse_x, mouse_y)
@@ -82,7 +82,6 @@ def check_events(settings, screen, stats, bg, battle, tony, steven, play_button,
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_button(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
 						 mouse_x, mouse_y)
-			press_sound.play()
 		elif event.type == pygame.MOUSEBUTTONDOWN and stats.game_state == 4:
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_button(settings, screen, stats, bg, battle, tony, steven, play_button, settings_button, return_button,
@@ -167,7 +166,7 @@ def update_screen(settings, screen, stats, bg, bar, battle, tony, steven, play_b
 	elif stats.game_state == 1:
 		play_button.draw_button()
 		settings_button.draw_button()
-	else:
+	elif stats.game_state != 4:
 		tony.blitme()
 		steven.blitme()
 
@@ -189,11 +188,18 @@ def update_screen(settings, screen, stats, bg, bar, battle, tony, steven, play_b
 			tony_bullets.draw_bullet()
 	if stats.game_state == 4:
 		if battle.winner == 3:
-			drawText(screen, "There is no winner.", screen.get_rect().centerx, screen.get_rect().centery - 150)
+			drawText(screen, "There is no winner.", screen.get_rect().centerx, screen.get_rect().centery - 150,
+					 textHeight=48)
 		elif battle.winner == 1:
-			drawText(screen, "The winner is Steven Rogers.", screen.get_rect().centerx, screen.get_rect().centery - 150)
+			ending = pygame.image.load("sources/sr_win.jpg")
+			screen.blit(ending, screen.get_rect())
+			drawText(screen, "The winner is Steven Rogers.", screen.get_rect().centerx, screen.get_rect().centery - 150,
+					 textHeight=48, fontColor=(255, 255, 255))
 		elif battle.winner == 2:
-			drawText(screen, "The winner is Tony Starks.", screen.get_rect().centerx, screen.get_rect().centery - 150)
+			ending = pygame.image.load("sources/ts_win.jpg")
+			screen.blit(ending, screen.get_rect())
+			drawText(screen, "The winner is Tony Starks.", screen.get_rect().centerx, screen.get_rect().centery - 150,
+					 textHeight=48, fontColor=(255, 255, 255))
 		return_button.draw_button()
 
 	pygame.display.flip()
