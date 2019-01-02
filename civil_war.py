@@ -22,7 +22,7 @@ if __name__ == '__main__':
 	pygame.init()
 	pygame.mixer.init()
 	start_sound = pygame.mixer.Sound("sources/start_fight.wav")
-	start_sound.set_volume(0.3)
+	start_sound.set_volume(0.5)
 	s_hit_sound = pygame.mixer.Sound("sources/s_hit.wav")
 	s_hit_sound.set_volume(0.2)
 	t_hit_sound = pygame.mixer.Sound("sources/t_hit.wav")
